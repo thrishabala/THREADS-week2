@@ -1,0 +1,44 @@
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class WebCrawler {
+
+    static class CrawlerTask implements Runnable {
+        private final String url;
+        private final ConcurrentHashMap<String, String> crawledData;
+
+        public CrawlerTask(String url, ConcurrentHashMap<String, String> crawledData) {
+            this.url = url;
+            this.crawledData = crawledData;
+        }
+
+        @Override
+        public void run() {
+            // Simulate web page retrieval
+            String data = "Data from " + url;
+            crawledData.put(url, data);
+            System.out.println("Crawled: " + url);
+        }
+    }
+
+    public static void main(String[] args) {
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        ConcurrentHashMap<String, String> crawledData = new ConcurrentHashMap<>();
+
+        String[] urls = {"http://example.com", "http://example.org", "http://example.net"};
+
+        for (String url : urls) {
+            CrawlerTask task = new CrawlerTask(url, crawledData);
+            executorService.submit(task);
+        }
+
+        executorService.shutdown();
+
+        while (!executorService.isTerminated()) {
+            // Wait for all tasks to finish
+        }
+
+        System.out.println("Crawling completed. Crawled data: " + crawledData);
+    }
+}
