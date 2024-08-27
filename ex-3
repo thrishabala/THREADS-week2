@@ -1,0 +1,38 @@
+public class TaskScheduler {
+
+    static class Task extends Thread {
+        @Override
+        public void run() {
+            System.out.println("Task started");
+            for (int i = 0; i < 3; i++) {
+                System.out.println("Task step " + i);
+                if (i == 1) {
+                    yield();
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("Task completed");
+        }
+    }
+
+    public static void main(String[] args) {
+        Task task1 = new Task();
+        Task task2 = new Task();
+
+        task1.start();
+        task2.start();
+
+        try {
+            task1.join();
+            task2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("All tasks have been completed.");
+    }
+}
